@@ -96,7 +96,7 @@ class SleepTrackerFragment : Fragment() {
         sleepTrackerViewModel.showSnackBarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 // display the snackbar
-                // val activity = requireActivity().findViewById(android.R.id.content)
+                val activity = requireActivity().findViewById<View>(android.R.id.content)
                 Snackbar.make(activity, getString(R.string.cleared_message), Snackbar.LENGTH_SHORT).show()
                 // immediately reset the event
                 sleepTrackerViewModel.doneShowingSnackbar()
