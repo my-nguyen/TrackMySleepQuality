@@ -16,7 +16,6 @@
         app:layout_constraintEnd_toStartOf="@+id/quality_one_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_text"
-        android:onClick="clickListener"
         app:srcCompat="@drawable/ic_sleep_0" />
 
     <ImageView
@@ -27,7 +26,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/quality_zero_image"
         app:layout_constraintEnd_toStartOf="@+id/quality_two_image"
         app:layout_constraintStart_toEndOf="@+id/quality_zero_image"
-        android:onClick="clickListener"
         app:srcCompat="@drawable/ic_sleep_1" />
 
     <ImageView
@@ -39,7 +37,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/quality_one_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/quality_one_image"
-        android:onClick="clickListener"
         app:srcCompat="@drawable/ic_sleep_2" />
 
     <ImageView
@@ -55,7 +52,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/quality_zero_image"
         app:layout_constraintVertical_bias="0.0"
-        android:onClick="clickListener"
         app:srcCompat="@drawable/ic_sleep_3" />
 
     <ImageView
@@ -67,7 +63,6 @@
         app:layout_constraintEnd_toStartOf="@+id/quality_five_image"
         app:layout_constraintStart_toEndOf="@+id/quality_three_image"
         app:layout_constraintTop_toTopOf="@+id/quality_three_image"
-        android:onClick="clickListener"
         app:srcCompat="@drawable/ic_sleep_4" />
 
     <ImageView
@@ -80,7 +75,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/quality_four_image"
         app:layout_constraintTop_toTopOf="@+id/quality_four_image"
-        android:onClick="clickListener"
         app:srcCompat="@drawable/ic_sleep_5" />
 
     <TextView

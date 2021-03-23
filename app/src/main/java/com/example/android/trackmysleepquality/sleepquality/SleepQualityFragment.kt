@@ -63,6 +63,13 @@ class SleepQualityFragment : Fragment() {
             }
         })
 
+        binding.qualityZeroImage.setOnClickListener { sleepQualityViewModel.onSetSleepQuality(0) }
+        binding.qualityOneImage.setOnClickListener { sleepQualityViewModel.onSetSleepQuality(1) }
+        binding.qualityTwoImage.setOnClickListener { sleepQualityViewModel.onSetSleepQuality(2) }
+        binding.qualityThreeImage.setOnClickListener { sleepQualityViewModel.onSetSleepQuality(3) }
+        binding.qualityFourImage.setOnClickListener { sleepQualityViewModel.onSetSleepQuality(4) }
+        binding.qualityFiveImage.setOnClickListener { sleepQualityViewModel.onSetSleepQuality(5) }
+
         return binding.root
     }
 
