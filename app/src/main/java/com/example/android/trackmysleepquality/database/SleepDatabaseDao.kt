@@ -25,20 +25,22 @@ import androidx.room.Update
 @Dao
 interface SleepDatabaseDao {
     @Insert
-    fun insert(night: SleepNight)
+    suspend fun insert(night: SleepNight)
 
     @Update
-    fun update(night: SleepNight)
+    suspend fun update(night: SleepNight)
 
     @Query("SELECT * from sleep_nights WHERE nightId = :key")
-    fun get(key: Long): SleepNight?
+    suspend fun get(key: Long): SleepNight?
 
     @Query("DELETE FROM sleep_nights")
-    fun clear()
+    suspend fun clear()
 
     @Query("SELECT * FROM sleep_nights ORDER BY nightId DESC LIMIT 1")
-    fun getTonight(): SleepNight?
+    suspend fun getTonight(): SleepNight?
 
+    // this method doesn't require suspend, since Room already uses a background thread for the
+    // specific @Query which returns LiveData
     @Query("SELECT * FROM sleep_nights ORDER BY nightId DESC")
     fun getAllNights(): LiveData<List<SleepNight>>
 }

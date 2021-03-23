@@ -36,21 +36,21 @@ abstract class SleepDatabase : RoomDatabase() {
         // to all other threads immediately
         @Volatile
         private var INSTANCE: SleepDatabase? = null
-    }
 
-    fun getInstance(context: Context): SleepDatabase {
-        // multiple threads can potentially call getInstance() at the same time. a synchronized
-        // block ensures that only one thread of execution can enter the block, so that the database
-        // only gets initialized once
-        synchronized(this) {
-            var instance = INSTANCE
-            if (instance == null) {
-                instance = Room.databaseBuilder(context.applicationContext, SleepDatabase::class.java, "sleep_database")
-                        .fallbackToDestructiveMigration()
-                        .build()
-                INSTANCE = instance
+        fun getInstance(context: Context): SleepDatabase {
+            // multiple threads can potentially call getInstance() at the same time. a synchronized
+            // block ensures that only one thread of execution can enter the block, so that the
+            // database only gets initialized once
+            synchronized(this) {
+                var instance = INSTANCE
+                if (instance == null) {
+                    instance = Room.databaseBuilder(context.applicationContext, SleepDatabase::class.java, "sleep_database")
+                            .fallbackToDestructiveMigration()
+                            .build()
+                    INSTANCE = instance
+                }
+                return instance
             }
-            return instance
         }
     }
 }

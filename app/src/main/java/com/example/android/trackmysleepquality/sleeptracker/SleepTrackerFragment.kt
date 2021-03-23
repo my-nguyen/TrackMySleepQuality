@@ -22,7 +22,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.android.trackmysleepquality.R
+import com.example.android.trackmysleepquality.database.SleepDatabase
+import com.example.android.trackmysleepquality.databinding.FragmentSleepQualityBinding
 import com.example.android.trackmysleepquality.databinding.FragmentSleepTrackerBinding
 
 /**
@@ -37,12 +41,36 @@ class SleepTrackerFragment : Fragment() {
      *
      * This function uses DataBindingUtil to inflate R.layout.fragment_sleep_quality.
      */
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val binding = FragmentSleepTrackerBinding.inflate(inflater, container, false)
 
-        // Get a reference to the binding object and inflate the fragment views.
-        val binding: FragmentSleepTrackerBinding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_sleep_tracker, container, false)
+        // get a reference to the application context, to pass to the view-model factory provider
+        val application = requireNotNull(activity).application
+
+        // get a reference to the data source via a reference to the DAO
+        val dataSource = SleepDatabase.getInstance(application).sleepDatabaseDao
+
+        // create an instance of the viewModelFactory
+        val viewModelFactory = SleepTrackerViewModelFactory(dataSource, application)
+
+        // get a reference to the SleepTrackerViewModel
+        val sleepTrackerViewModel = ViewModelProvider(this, viewModelFactory).get(SleepTrackerViewModel::class.java)
+
+        binding.startButton.setOnClickListener {
+            sleepTrackerViewModel.onStartTracking()
+        }
+
+        binding.stopButton.setOnClickListener {
+            sleepTrackerViewModel.onStopTracking()
+        }
+
+        binding.clearButton.setOnClickListener {
+            sleepTrackerViewModel.onClear()
+        }
+
+        sleepTrackerViewModel.nightsString.observe(viewLifecycleOwner, Observer {
+            binding.textview.text = it.toString()
+        })
 
         return binding.root
     }
