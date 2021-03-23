@@ -17,10 +17,7 @@
 package com.example.android.trackmysleepquality.sleeptracker
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.android.trackmysleepquality.database.SleepDatabaseDao
 import com.example.android.trackmysleepquality.database.SleepNight
 import com.example.android.trackmysleepquality.formatNights
@@ -40,27 +37,30 @@ class SleepTrackerViewModel(val database: SleepDatabaseDao, application: Applica
         formatNights(it, application.resources)
     }
 
+    // navigation to SleepQualityFragment when the user taps the Stop button
+    private val _navigateToSleepQuality = MutableLiveData<SleepNight>()
+    val navigateToSleepQuality: LiveData<SleepNight>
+        get() = _navigateToSleepQuality
+
+    private var _showSnackbarEvent = MutableLiveData<Boolean>()
+    val showSnackBarEvent: LiveData<Boolean>
+        get() = _showSnackbarEvent
+
+    val startButtonVisible = Transformations.map(tonight) {
+        // The Start button should be enabled when tonight is null
+        it == null
+    }
+    val stopButtonVisible = Transformations.map(tonight) {
+        // The Stop button should be enabled when tonight is not null
+        it != null
+    }
+    val clearButtonVisible = Transformations.map(nights) {
+        // The Clear button should only be enabled if nights table have records
+        it?.isNotEmpty()
+    }
+
     init {
         initializeTonight()
-    }
-
-    private fun initializeTonight() {
-        // start a coroutine in the ViewModelScope
-        viewModelScope.launch {
-            // fetch the value for tonight from the database
-            tonight.value = getTonightFromDatabase()
-        }
-    }
-
-    private suspend fun getTonightFromDatabase(): SleepNight? {
-        // get tonight (the newest night) from the database
-        var night = database.getTonight()
-        // If the start and end times are not the same, meaning that the night has already been completed, return null
-        if (night?.endTimeMilli != night?.startTimeMilli) {
-            night = null
-        }
-        // Otherwise, return the night
-        return night
     }
 
     // the click handler for the Start button
@@ -85,6 +85,9 @@ class SleepTrackerViewModel(val database: SleepDatabaseDao, application: Applica
             // and call update() with the night data.
             oldNight.endTimeMilli = System.currentTimeMillis()
             update(oldNight)
+
+            // set value of _navigateToSleepQuality, to trigger navigation to SleepQualityFragment
+            _navigateToSleepQuality.value = oldNight
         }
     }
 
@@ -92,7 +95,19 @@ class SleepTrackerViewModel(val database: SleepDatabaseDao, application: Applica
         viewModelScope.launch {
             clear()
             tonight.value = null
+
+            // trigger the event
+            _showSnackbarEvent.value = true
         }
+    }
+
+    // reset the variable that triggers navigation
+    fun doneNavigating() {
+        _navigateToSleepQuality.value = null
+    }
+
+    fun doneShowingSnackbar() {
+        _showSnackbarEvent.value = false
     }
 
     private suspend fun insert(night: SleepNight) {
@@ -107,6 +122,25 @@ class SleepTrackerViewModel(val database: SleepDatabaseDao, application: Applica
 
     private suspend fun clear() {
         database.clear()
+    }
+
+    private fun initializeTonight() {
+        // start a coroutine in the ViewModelScope
+        viewModelScope.launch {
+            // fetch the value for tonight from the database
+            tonight.value = getTonightFromDatabase()
+        }
+    }
+
+    private suspend fun getTonightFromDatabase(): SleepNight? {
+        // get tonight (the newest night) from the database
+        var night = database.getTonight()
+        // If the start and end times are not the same, meaning that the night has already been completed, return null
+        if (night?.endTimeMilli != night?.startTimeMilli) {
+            night = null
+        }
+        // Otherwise, return the night
+        return night
     }
 }
 
